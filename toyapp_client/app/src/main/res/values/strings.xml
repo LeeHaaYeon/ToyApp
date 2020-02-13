@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">toyapp_client</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="client_app">This is Client of toy app</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
+
