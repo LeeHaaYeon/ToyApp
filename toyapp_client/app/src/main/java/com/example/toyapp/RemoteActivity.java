@@ -2,6 +2,7 @@ package com.example.toyapp;
 
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -9,8 +10,13 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class RemoteActivity extends AppCompatActivity {
 
@@ -21,6 +27,48 @@ public class RemoteActivity extends AppCompatActivity {
         Log.e("RemoteClient", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote);
+
+
+
+
+        // start RemoteActivity by Button
+        Button button = (Button) findViewById(R.id.buttonStartSum) ;
+        Log.d("MainActivity", "register client_button on MainActivity" );
+
+        button.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int arg1, arg2, result;
+                Intent intent = new Intent();
+                intent.setClassName("com.example.toyapp", "com.example.toyapp.RemoteService");
+
+                EditText editTextNo1 = (EditText) findViewById(R.id.Number1) ;
+                String strNo1 = editTextNo1.getText().toString() ;
+                arg1 =  Integer.parseInt(strNo1);
+
+
+                EditText editTextNo2 = (EditText) findViewById(R.id.Number2) ;
+                String strNo2 = editTextNo2.getText().toString() ;
+                arg2 =  Integer.parseInt(strNo2);
+
+                try {
+                    result =  mRemoteBinder.addService(arg1, arg2);
+                    Log.e("RemoteClient", "addService succeed! -> " + result);
+
+                } catch (RemoteException e) {
+                    result = 0;
+                    e.printStackTrace();
+                }
+
+                Context context = getApplicationContext();
+                Toast.makeText(RemoteActivity.this , "button clicked! " + result , Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
 
     }
 
@@ -65,6 +113,7 @@ public class RemoteActivity extends AppCompatActivity {
 
     }
 
+
     private void registerService() {
         Log.e("RemoteClient", "registerService");
 
@@ -83,12 +132,6 @@ public class RemoteActivity extends AppCompatActivity {
     private final ServiceConnection mServiceConn = new ServiceConnection() {
 
         @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("RemoteClient", "onServiceDisconnected");
-            mRemoteBinder = null;
-        }
-
-        @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.e("RemoteClient", "onServiceConnected!");
             mRemoteBinder = IRemoteService.Stub.asInterface(service);
@@ -96,11 +139,18 @@ public class RemoteActivity extends AppCompatActivity {
             try {
 
                 String msg = mRemoteBinder.hello();
-                Log.e("RemoteClient", msg);
 
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("RemoteClient", "onServiceDisconnected");
+            mRemoteBinder = null;
+        }
     };
+
+
 }

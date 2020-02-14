@@ -14,5 +14,6 @@ interface IRemoteService {
     int disconnect();
     boolean isConnect();
     String hello();
+    int addService(int arg1, int arg2);
 
 }

@@ -57,6 +57,13 @@ public class RemoteService extends Service {
             return "CONNECTION ESTABLISHED";
         }
 
+        @Override
+        public int addService(int arg1, int arg2) throws RemoteException {
+
+            Log.e("RemoteService", "addService() called");
+            return arg1 + arg2;
+
+        }
 
         @Override
         public boolean isConnect() throws RemoteException {
